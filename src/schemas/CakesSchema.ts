@@ -7,3 +7,5 @@ export const CakesSchema = z.object({
   imageUrl: z.string(),
   description: z.string(),
 });
+
+export type Cakes = z.infer<typeof CakesSchema>;

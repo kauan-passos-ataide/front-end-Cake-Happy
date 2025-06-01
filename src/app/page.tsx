@@ -1,11 +1,12 @@
 'use client';
 import { useState } from 'react';
-import { CakesSchema } from '../schemas/CakesSchema';
-import { z } from 'zod';
+import { Cakes } from '../schemas/CakesSchema';
 import Image from 'next/image';
+import { useCartModalStore } from '@/stores/cart/modal.store';
+import { Product, useProductsCart } from '@/stores/cart/product.store';
+import { formatCurrency } from '@/lib/utils';
 
 export default function Home() {
-  type Cakes = z.infer<typeof CakesSchema>;
   const [cakes, setCakes] = useState<Cakes[]>([
     {
       id: '123',
@@ -50,6 +51,21 @@ export default function Home() {
       price: 50.0,
     },
   ]);
+
+  const cartStore = useCartModalStore();
+  const productsCartStore = useProductsCart();
+
+  const addItemToCart = (item: Product) => {
+    productsCartStore.addProduct({
+      id: item.id,
+      name: item.name,
+      imageUrl: item.imageUrl,
+      price: item.price,
+      quantity: item.quantity,
+    });
+    cartStore.open();
+  };
+
   return (
     <div className=" w-full h-full flex flex-col items-center justify-center">
       <div className="w-full grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
@@ -63,14 +79,27 @@ export default function Home() {
               alt={item.name}
               width={150}
               height={150}
-              className="rounded-lg min-w-[150px] min-h-[150px]"
+              className="rounded-lg min-w-[150px] min-h-[150px] object-cover"
             ></Image>
-            <div className="w-full h-full flex flex-col justify-end">
-              <h1 className="text-lg">{item.name}</h1>
-              <h2 className="mt-3 font-bold">R$ {item.price.toFixed(2)}</h2>
-              <button className="bg-cake-happy-dark text-white rounded-lg px-2 py-1 cursor-pointer">
-                Comprar
-              </button>
+            <div className="w-full h-full flex flex-col justify-between">
+              <h1 className="text-lg wrap-break-word">{item.name}</h1>
+              <div className="w-full">
+                <h2 className="mt-3 font-bold">{formatCurrency(item.price)}</h2>
+                <button
+                  className="bg-cake-happy-dark w-full text-white rounded-lg px-2 py-1 cursor-pointer"
+                  onClick={() =>
+                    addItemToCart({
+                      id: item.id,
+                      name: item.name,
+                      imageUrl: item.imageUrl,
+                      price: item.price,
+                      quantity: 1,
+                    })
+                  }
+                >
+                  Comprar
+                </button>
+              </div>
             </div>
           </div>
         ))}

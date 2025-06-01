@@ -1,13 +1,10 @@
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import './globals.css';
-import {
-  ShoppingCart,
-  UserRound,
-  Instagram,
-  MessageCircleQuestion,
-} from 'lucide-react';
+import { UserRound, Instagram, MessageCircleQuestion } from 'lucide-react';
 import Link from 'next/link';
+import CartModal from '@/components/cart/CartModal';
+import CartButton from '@/components/cart/CartButton';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -34,6 +31,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-col w-screen min-h-screen overflow-x-hidden overflow-y-auto`}
       >
+        <CartModal />
         <div className="bg-cake-happy-dark w-full h-14 flex flex-row items-center px-10 py-6">
           <Link
             href="/"
@@ -41,13 +39,11 @@ export default function RootLayout({
           >
             Cake Happy
           </Link>
-          <div className="flex flex-row justify-end items-center space-x-3">
+          <div className="flex flex-row justify-end items-center space-x-3 text-cake-happy-dark">
             <button className="bg-cake-happy-clean p-2 rounded-full cursor-pointer">
               <UserRound />
             </button>
-            <button className="bg-cake-happy-clean p-2 rounded-full cursor-pointer">
-              <ShoppingCart />
-            </button>
+            <CartButton />
           </div>
         </div>
         <main className="flex flex-1 w-full px-10 py-4 container mx-auto">
