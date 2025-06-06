@@ -1,5 +1,5 @@
 'use client';
-import { useCartModalStore } from '@/stores/cart/modal.store';
+import { useCartModalStore } from '@/stores/cart/modal-store';
 import { X, CirclePlus, CircleMinus } from 'lucide-react';
 import {
   Drawer,
@@ -8,13 +8,13 @@ import {
   DrawerFooter,
   DrawerHeader,
   DrawerTitle,
-} from '../ui/drawer';
-import { useProductsCart } from '@/stores/cart/product.store';
+} from '../../app/ui/drawer';
+import { useProductsCartStore } from '@/stores/cart/cart-product-store';
 import { formatCurrency } from '@/lib/utils';
 
 export default function CartModal() {
   const cartStore = useCartModalStore();
-  const productsCartStore = useProductsCart();
+  const productsCartStore = useProductsCartStore();
 
   return (
     <Drawer

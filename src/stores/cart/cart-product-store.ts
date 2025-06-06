@@ -15,7 +15,7 @@ type ProductsCart = {
   addQuantity: (id: string) => void;
   decreaseQuantity: (id: string) => void;
 };
-export const useProductsCart = create<ProductsCart>((set, get) => ({
+export const useProductsCartStore = create<ProductsCart>((set, get) => ({
   products: [],
   addProduct: (product) => {
     const products = get().products;
