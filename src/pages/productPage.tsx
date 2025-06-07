@@ -68,7 +68,7 @@ export default function ProductPageUI({ id }: { id: string }) {
                   alt={item.name}
                   width={300}
                   height={300}
-                  className="rounded-lg min-w-[300px] max-w-[300px] max-h-[300px] min-h-[300px] object-cover"
+                  className="rounded-lg lg:ml-36 min-w-[300px] max-w-[300px] max-h-[300px] min-h-[300px] object-cover"
                 ></Image>
                 <div className="w-full flex flex-col gap-2">
                   <h1 className="flex font-bold w-full text-cake-happy-dark px-2 py-1 bg-cake-happy-clean/30 border border-cake-happy-dark rounded-lg justify-center items-center">
@@ -79,7 +79,7 @@ export default function ProductPageUI({ id }: { id: string }) {
                       <div>
                         <h1>Valor por kg: {formatCurrency(item.price)}</h1>
                       </div>
-                      <div className="w-3/10 flex justify-center mx-1 gap-3 p-1 bg-cake-happy-dark rounded-lg text-cake-happy-clean">
+                      <div className="w-40 flex flex-row justify-between mx-1 gap-3 py-1 px-4 bg-cake-happy-dark rounded-lg text-cake-happy-clean">
                         <CircleMinus
                           className="w-5 cursor-pointer"
                           onClick={decreaseQuantity}
