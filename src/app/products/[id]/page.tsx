@@ -1,14 +1,10 @@
-import ProductPageUI from '@/pages/productPage';
+import ProductPage from '@/components/product/productPage';
 
-export default async function ProductPage({
-  params,
-}: {
-  params: { id: string };
-}) {
+export default async function Product({ params }: { params: { id: string } }) {
   const { id } = await params;
   return (
     <div className="flex flex-col w-full h-full pb-20">
-      <ProductPageUI id={id} />
+      <ProductPage id={id} />
     </div>
   );
 }
