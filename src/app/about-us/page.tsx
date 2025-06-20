@@ -1,4 +1,4 @@
-export default function AboutUs() {
+export default async function AboutUs() {
   return (
     <div className="mt-10">
       <h1 className="text-xl text-cake-happy-dark pb-5">Sobre Nós</h1>

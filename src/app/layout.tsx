@@ -5,6 +5,7 @@ import { UserRound, Instagram, MessageCircleQuestion } from 'lucide-react';
 import Link from 'next/link';
 import CartModal from '@/components/cart/CartModal';
 import CartButton from '@/components/cart/CartButton';
+import TanstackProvider from '@/lib/tanstack-provider';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -42,7 +43,7 @@ export default function RootLayout({
             </Link>
             <div className="flex flex-row justify-end items-center space-x-3 text-cake-happy-dark">
               <Link
-                href={'/login'}
+                href={'/sign-in'}
                 className="bg-cake-happy-clean p-2 rounded-full cursor-pointer"
               >
                 <UserRound />
@@ -50,9 +51,11 @@ export default function RootLayout({
               <CartButton />
             </div>
           </div>
-          <main className="flex flex-1 w-full px-10 py-4 container mx-auto">
-            {children}
-          </main>
+          <TanstackProvider>
+            <main className="flex flex-1 w-full px-10 py-4 container mx-auto">
+              {children}
+            </main>
+          </TanstackProvider>
           <div className="bg-cake-happy-dark text-cake-happy-clean w-full flex flex-row justify-between bottom-0 items-center rounded-tl-lg rounded-br-lg">
             <div className="w-full flex flex-row justify-between items-center px-10 py-6 container mx-auto">
               <div className="flex flex-col space-y-3 justify-center">
