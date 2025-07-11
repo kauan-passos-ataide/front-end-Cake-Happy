@@ -1,6 +1,6 @@
 'use client';
 import { useCartModalStore } from '@/stores/cart/modal-store';
-import { X, CirclePlus, CircleMinus } from 'lucide-react';
+import { X, CirclePlus, CircleMinus, LoaderCircle } from 'lucide-react';
 import {
   Drawer,
   DrawerClose,
@@ -8,13 +8,57 @@ import {
   DrawerFooter,
   DrawerHeader,
   DrawerTitle,
-} from '../../app/ui/drawer';
+} from '../ui/drawer';
 import { useProductsCartStore } from '@/stores/cart/cart-product-store';
 import { formatCurrency } from '@/lib/utils';
+import { loadStripe } from '@stripe/stripe-js';
+import * as dotenv from 'dotenv';
+import { useMutation } from '@tanstack/react-query';
+import axios, { AxiosError } from 'axios';
+import { useState } from 'react';
+
+dotenv.config();
 
 export default function CartModal() {
+  const [disableButton, setDisableButton] = useState<boolean>(false);
+
   const cartStore = useCartModalStore();
   const productsCartStore = useProductsCartStore();
+  const stripePromise = loadStripe(
+    process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY as string,
+  );
+  const mutation = useMutation({
+    mutationFn: async () =>
+      await axios.post(
+        `${process.env.NEXT_PUBLIC_URL_API as string}/stripe/checkout`,
+        productsCartStore.products.map((item) => ({
+          product_id: item.id,
+          quantity: item.quantity,
+        })),
+      ),
+    onMutate: () => {
+      setDisableButton(true);
+    },
+    onSuccess: (data) => {
+      setDisableButton(false);
+      checkout(data.data.id);
+    },
+    onError: (err: AxiosError) => {
+      setDisableButton(false);
+      if (err.isAxiosError) {
+        alert(err.message);
+      }
+    },
+  });
+  async function checkout(id: string) {
+    const stripe = await stripePromise;
+    await stripe?.redirectToCheckout({
+      sessionId: id,
+    });
+  }
+  const handleSubmit = () => {
+    mutation.mutateAsync();
+  };
 
   return (
     <Drawer
@@ -70,7 +114,7 @@ export default function CartModal() {
                   </div>
                   <p className="w-full min-w-0 flex justify-center">
                     <span className="break-all">
-                      {formatCurrency(productsCartStore.totalValue)}
+                      {formatCurrency(item.price * item.quantity)}
                     </span>
                   </p>
                 </div>
@@ -83,12 +127,17 @@ export default function CartModal() {
         >
           <div className="flex flex-row justify-between items-center text-cake-happy-dark text-lg">
             <p>Total:</p>
-            <button>{formatCurrency(productsCartStore.totalValue)}</button>
+            <p>{formatCurrency(productsCartStore.totalValue)}</p>
           </div>
           <button
-            className={`bg-cake-happy-dark w-full text-white text-lg font-semibold px-3 py-2 rounded-lg flex items-center justify-center`}
+            className={`bg-cake-happy-dark w-full text-white text-lg font-semibold px-3 py-2 rounded-lg flex items-center justify-center cursor-pointer`}
+            onClick={handleSubmit}
           >
-            Finalizar compra
+            {disableButton ? (
+              <LoaderCircle className="animate-spin text-white" />
+            ) : (
+              'Finalizar compra'
+            )}
           </button>
         </DrawerFooter>
       </DrawerContent>

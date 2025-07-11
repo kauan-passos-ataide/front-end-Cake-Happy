@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 
 export type Product = {
   quantity: number;
@@ -15,65 +16,80 @@ type ProductsCart = {
   removeProduct: (id: string) => void;
   addQuantity: (id: string) => void;
   decreaseQuantity: (id: string) => void;
+  clearCart: () => void;
 };
-export const useProductsCartStore = create<ProductsCart>((set, get) => ({
-  products: [],
-  totalValue: 0,
-  addProduct: (product) => {
-    const products = get().products;
-    const verifyProduct = products.find((item) => item.id === product.id);
-    if (verifyProduct) {
-      set((state) => ({
-        products: state.products.map((item) =>
-          item.id === verifyProduct.id
-            ? { ...item, quantity: item.quantity + product.quantity }
-            : item,
-        ),
-      }));
-    } else {
-      set((state) => ({ products: [...state.products, product] }));
-    }
-    set((state) => ({
-      totalValue: state.totalValue + product.price * product.quantity,
-    }));
-  },
+export const useProductsCartStore = create<ProductsCart>()(
+  persist(
+    (set, get) => ({
+      products: [],
+      totalValue: 0,
+      addProduct: (product) => {
+        const products = get().products;
+        const verifyProduct = products.find((item) => item.id === product.id);
+        let updateProducts;
 
-  removeProduct: (id) => {
-    const products = get().products;
-    const product = products.filter((item) => item.id === id);
-    set((state) => ({
-      totalValue: state.totalValue - product[0].price * product[0].quantity,
-    }));
-    set((state) => ({
-      products: state.products.filter((item) => item.id !== id),
-    }));
-  },
+        if (verifyProduct) {
+          updateProducts = products.map((item) =>
+            item.id === verifyProduct.id
+              ? { ...item, quantity: item.quantity + product.quantity }
+              : item,
+          );
+        } else {
+          updateProducts = [...products, product];
+        }
+        set((state) => ({
+          products: updateProducts,
+          totalValue: state.totalValue + product.price * product.quantity,
+        }));
+      },
 
-  addQuantity: (id) => {
-    const products = get().products;
-    const product = products.filter((item) => item.id === id);
-    set((state) => ({
-      totalValue: state.totalValue + product[0].price,
-    }));
-    set((state) => ({
-      products: state.products.map((item) =>
-        item.id === id ? { ...item, quantity: item.quantity + 1 } : item,
-      ),
-    }));
-  },
+      removeProduct: (id) => {
+        const products = get().products;
+        const product = products.find((item) => item.id === id);
 
-  decreaseQuantity: (id) => {
-    const products = get().products;
-    const product = products.filter((item) => item.id === id);
-    set((state) => ({
-      totalValue: state.totalValue - product[0].price,
-    }));
-    set((state) => ({
-      products: state.products.map((item) =>
-        item.id === id && item.quantity > 1
-          ? { ...item, quantity: item.quantity - 1 }
-          : item,
-      ),
-    }));
-  },
-}));
+        if (product) {
+          set((state) => ({
+            totalValue: state.totalValue - product.price * product.quantity,
+            products: state.products.filter((item) => item.id !== id),
+          }));
+        }
+      },
+
+      addQuantity: (id) => {
+        const products = get().products;
+        const verifyProduct = products.find((item) => item.id === id);
+        set((state) => ({
+          products: state.products.map((item) =>
+            item.id === id ? { ...item, quantity: item.quantity + 1 } : item,
+          ),
+        }));
+        if (verifyProduct) {
+          set((state) => ({
+            totalValue: state.totalValue + verifyProduct.price,
+          }));
+        }
+      },
+
+      decreaseQuantity: (id) => {
+        const products = get().products;
+        const verifyProduct = products.find((item) => item.id === id);
+        set((state) => ({
+          products: state.products.map((item) =>
+            item.id === id && item.quantity > 1
+              ? { ...item, quantity: item.quantity - 1 }
+              : item,
+          ),
+        }));
+        if (verifyProduct && verifyProduct.quantity > 1) {
+          set((state) => ({
+            totalValue: state.totalValue - verifyProduct.price,
+          }));
+        }
+      },
+      clearCart: () => set({ products: [], totalValue: 0 }),
+    }),
+    {
+      name: 'cart-storage',
+    },
+  ),
+);

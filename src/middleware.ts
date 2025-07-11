@@ -4,7 +4,7 @@ const publicRoutes = [
   { path: '/products', whenAuthenticated: 'next' },
   { path: '/about-us', whenAuthenticated: 'next' },
   { path: '/politics', whenAuthenticated: 'next' },
-  { path: '/sign-in', whenAuthenticated: 'redirect' },
+  { path: '/login', whenAuthenticated: 'redirect' },
   { path: '/sign-up', whenAuthenticated: 'redirect' },
 ] as const;
 const REDIRECT_WHEN_NOT_AUTHENTICATED_ROUTE = 'sign-in';
@@ -14,7 +14,7 @@ export default function middleware(request: NextRequest) {
   const isPublic = publicRoutes.filter(
     (item) => pathname.startsWith(item.path) || pathname === '/',
   );
-  const token = request.cookies.get('token');
+  const token = request.cookies.get('token')?.value;
   const redirectUrl = request.nextUrl.clone();
 
   if (!token && isPublic.length === 1) {

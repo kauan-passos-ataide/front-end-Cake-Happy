@@ -151,4 +151,9 @@
   .animate-dot-3 {
     animation: dot-bounce 1.2s infinite ease-in-out 0.4s;
   }
+
+  .fc {
+    --fc-event-border-color: transparent;
+    --fc-event-bg-color: transparent;
+  }
 }
