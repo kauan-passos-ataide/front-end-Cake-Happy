@@ -21,11 +21,11 @@ export default function RootLayout({
           <SidebarProvider>
             <AppSidebar currentPath={pathname} />
             <main className="flex flex-col flex-1 w-full">
-              <div className="fixed z-30 top-0 pl-3 bg-white flex flex-row gap-3 w-full h-10 border-b justify-start items-center">
+              <div className="fixed z-30 top-0 px-3 bg-white flex flex-row gap-3 w-full h-10 border-b justify-start items-center">
                 <SidebarTrigger className="hover:bg-transparent cursor-pointer" />
                 <BreadcrumbWithCustomSeparator currentPath={pathname} />
               </div>
-              <div className="flex w-full flex-col flex-1 container mx-auto pt-10 pl-3">
+              <div className="flex w-full flex-col flex-1 container mx-auto pt-10 px-3">
                 {children}
               </div>
             </main>

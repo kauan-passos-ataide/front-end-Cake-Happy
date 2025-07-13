@@ -1,3 +1,4 @@
+import axios from 'axios';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
@@ -10,4 +11,14 @@ export const formatCurrency = (value: number) => {
     style: 'currency',
     currency: 'BRL',
   }).format(value);
+};
+
+export const logout = async () => {
+  await axios.post(
+    `${process.env.NEXT_PUBLIC_URL_API as string}/user/logout`,
+    null,
+    {
+      withCredentials: true,
+    },
+  );
 };

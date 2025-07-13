@@ -22,10 +22,10 @@ import {
   StoreIcon,
 } from './../icons/icons';
 import { useQuery } from '@tanstack/react-query';
-import axios from 'axios';
 import * as dotenv from 'dotenv';
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { logout } from '@/lib/utils';
+import privateApi from '@/services/privateApi';
 
 dotenv.config();
 type ItemsType = {
@@ -37,17 +37,11 @@ type ItemsType = {
 export default function AppSidebar({ currentPath }: { currentPath: string }) {
   const [itemsMain, setItemsMain] = useState<ItemsType[]>([]);
   const [itemsFooter, setItemsFooter] = useState<ItemsType[]>([]);
-  const router = useRouter();
 
   const { isPending, isError, data } = useQuery({
     queryKey: ['user'],
     queryFn: async () => {
-      return await axios.get(
-        `${process.env.NEXT_PUBLIC_URL_API as string}/user/verify-role`,
-        {
-          withCredentials: true,
-        },
-      );
+      return await privateApi.get(`/user/verify-role`);
     },
   });
   const defaultPath = '/dashboard';
@@ -111,8 +105,8 @@ export default function AppSidebar({ currentPath }: { currentPath: string }) {
     return (
       <Sidebar>
         <SidebarContent>
-          <SidebarMenu>
-            {Array.from({ length: 5 }).map((_, index) => (
+          <SidebarMenu className="mt-20">
+            {Array.from({ length: 8 }).map((_, index) => (
               <SidebarMenuItem key={index}>
                 <SidebarMenuSkeleton showIcon />
               </SidebarMenuItem>
@@ -122,19 +116,8 @@ export default function AppSidebar({ currentPath }: { currentPath: string }) {
       </Sidebar>
     );
   }
-  const logout = async () => {
-    await axios.post(
-      `${process.env.NEXT_PUBLIC_URL_API as string}/user/logout`,
-      null,
-      {
-        withCredentials: true,
-      },
-    );
-  };
 
   if (isError) {
-    logout();
-    router.push('/');
     return;
   }
 

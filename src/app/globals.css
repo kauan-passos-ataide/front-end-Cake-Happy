@@ -153,7 +153,30 @@
   }
 
   .fc {
-    --fc-event-border-color: transparent;
-    --fc-event-bg-color: transparent;
+    --fc-event-border-color: none;
+    --fc-event-bg-color: none;
+    --fc-button-bg-color: #38000a;
+    --fc-button-border-color: none;
+    --fc-button-hover-bg-color: #ffa796bd;
+    --fc-button-hover-border-color: none;
+    --fc-button-active-bg-color: #ffa896;
+    --fc-button-active-border-color: none;
+  }
+
+  .fc .fc-button:focus {
+    outline: none !important;
+    box-shadow: none !important;
+    transform: none !important;
+    scale: 1 !important;
+  }
+
+  .fc .fc-button {
+    border-radius: 0.5rem !important;
+  }
+
+  .fc .fc-view-harness {
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid #adadad;
   }
 }

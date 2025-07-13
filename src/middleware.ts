@@ -14,7 +14,7 @@ export default function middleware(request: NextRequest) {
   const isPublic = publicRoutes.filter(
     (item) => pathname.startsWith(item.path) || pathname === '/',
   );
-  const token = request.cookies.get('token')?.value;
+  const token = request.cookies.get('cu_refresh')?.value;
   const redirectUrl = request.nextUrl.clone();
 
   if (!token && isPublic.length === 1) {

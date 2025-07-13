@@ -13,7 +13,6 @@ import { useState } from 'react';
 import { LoaderCircle } from 'lucide-react';
 import { useMutation } from '@tanstack/react-query';
 import axios from 'axios';
-import { useAuthStore } from '@/stores/auth/auth-store';
 import { useRouter } from 'next/navigation';
 
 const FormSchema = z.object({
@@ -33,7 +32,6 @@ export function InputOTPForm({ user }: { user: User }) {
   const [disableButton, setDisableButton] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>('');
 
-  const authStore = useAuthStore();
   const router = useRouter();
 
   const {
@@ -61,8 +59,7 @@ export function InputOTPForm({ user }: { user: User }) {
     onMutate: () => {
       setDisableButton(true);
     },
-    onSuccess: (data) => {
-      authStore.setAccessToken(data.data);
+    onSuccess: () => {
       router.push('/dashboard');
     },
     onError: (error) => {
