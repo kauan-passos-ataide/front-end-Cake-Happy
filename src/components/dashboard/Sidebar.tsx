@@ -16,6 +16,7 @@ import {
   CreditCartIcon,
   HelpIcon,
   HomeIcon,
+  KanbanIcon,
   LogoutIcon,
   OrderListIcon,
   SettingsIcon,
@@ -57,6 +58,11 @@ export default function AppSidebar({ currentPath }: { currentPath: string }) {
           title: 'Calendario',
           url: `${defaultPath}/calendar`,
           icon: CalendarIcon,
+        },
+        {
+          title: 'Kanban',
+          url: `${defaultPath}/kanban`,
+          icon: KanbanIcon,
         },
         {
           title: 'Meus produtos',

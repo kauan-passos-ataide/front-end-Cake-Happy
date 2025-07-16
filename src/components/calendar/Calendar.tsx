@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   format,
   startOfMonth,
@@ -8,24 +8,17 @@ import {
   endOfWeek,
   addDays,
   isSameMonth,
-  isSameDay,
+  parseISO,
 } from 'date-fns';
 import { Dialog, DialogTrigger, DialogContent } from '@radix-ui/react-dialog';
 import { cn, formatCurrency } from '@/lib/utils';
 import { ptBR } from 'date-fns/locale';
 import { CaretLeftIcon, CaretRightIcon } from '../icons/icons';
-import {
-  DialogClose,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '../ui/dialog';
+import { DialogClose, DialogHeader, DialogTitle } from '../ui/dialog';
 import { Button } from '../ui/button';
 import { useQuery } from '@tanstack/react-query';
-import axios from 'axios';
-import { useAuthStore } from '@/stores/auth/auth-store';
 import { SkeletonCalendar } from './SkeletonCalendar';
-import { useRouter } from 'next/navigation';
+import privateApi from '@/services/privateApi';
 
 type Order = {
   id: string;
@@ -38,31 +31,30 @@ type Order = {
 const CalendarUI = () => {
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [orders, setOrders] = useState<Order[]>([]);
-  const [selectedDate, setSelectedDate] = useState(null);
 
-  const authStore = useAuthStore();
-  const router = useRouter();
-
-  const { isPending, isError, data, isSuccess } = useQuery({
-    queryKey: ['user'],
+  const { isPending, isError, data } = useQuery({
+    queryKey: ['orders', currentMonth],
     queryFn: async () => {
-      return await axios.get(
-        `${process.env.NEXT_PUBLIC_URL_API as string}/orders/getOrders`,
-        {
-          withCredentials: true,
-          data: {
-            currentMonth,
-          },
-        },
-      );
+      return await getOrders();
     },
   });
 
+  async function getOrders() {
+    return await privateApi.post(`/order/get-orders-test`, {
+      currentMonth,
+    });
+  }
+
+  useEffect(() => {
+    if (!data?.data.orders) return;
+    setOrders(data.data.orders);
+  }, [data]);
+
   if (isPending) return <SkeletonCalendar />;
   if (isError) {
-    router.push('/dashboard');
     return;
   }
+
   // const orders: Order[] = [
   //   {
   //     id: '1',
@@ -129,16 +121,18 @@ const CalendarUI = () => {
   }
 
   const ordersByDate = orders.reduce<Record<string, Order[]>>((acc, ev) => {
-    const key = format(new Date(ev.date), 'yyyy-MM-dd');
+    const key = format(parseISO(ev.date), 'yyyy-MM-dd');
     acc[key] = acc[key] || [];
     acc[key].push(ev);
     return acc;
   }, {});
 
-  const handlePrev = () =>
+  const handlePrev = () => {
     setCurrentMonth((prev) => addDays(startOfMonth(prev), -1));
-  const handleNext = () =>
+  };
+  const handleNext = () => {
     setCurrentMonth((prev) => addDays(endOfMonth(prev), 1));
+  };
 
   return (
     <div className="p-4">

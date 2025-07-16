@@ -25,7 +25,9 @@ export default function RootLayout({
                 <SidebarTrigger className="hover:bg-transparent cursor-pointer" />
                 <BreadcrumbWithCustomSeparator currentPath={pathname} />
               </div>
-              <div className="flex w-full flex-col flex-1 container mx-auto pt-10 px-3">
+              <div
+                className={`flex w-full flex-col flex-1 container mx-auto pt-10 px-3`}
+              >
                 {children}
               </div>
             </main>
